@@ -1,28 +1,39 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="hello">
+    <h3>Internet connection status</h3>
+    <br />  
+    <div class="online-view">
+    <slot v-if="online" name="online">Online</slot>
+    <slot v-else name="offline">Ofline</slot>
+  </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
+export default { 
+  data() {
+    return {
+      online: navigator.onLine,
+    };
+  }, 
+  mounted() {
+    window.addEventListener("online", this.onchange);
+    window.addEventListener("offline", this.onchange);
+    this.onchange();
+  },
+  beforeDestroy() {
+    window.removeEventListener("online", this.onchange);
+    window.removeEventListener("offline", this.onchange);
+  },
+  methods: {
+    onchange() {
+      this.online = navigator.onLine;
+      this.$emit(this.online ? "online" : "offline");
+    }
   }
-}
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped> 
 </style>
